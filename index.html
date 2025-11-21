@@ -1,0 +1,1495 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Minha Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #050816;
+      --bg-alt: #0f172a;
+      --card-bg: #020617;
+      --accent: #38bdf8;
+      --accent-soft: rgba(56, 189, 248, 0.15);
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --border: #1f2933;
+      --radius-lg: 16px;
+      --radius-md: 10px;
+      --shadow-soft: 0 18px 45px rgba(15, 23, 42, 0.9);
+      --transition: 150ms ease-out;
+      --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Segoe UI", sans-serif;
+    }
+
+    body[data-theme="light"] {
+      --bg: #f3f4f6;
+      --bg-alt: #e5e7eb;
+      --card-bg: #ffffff;
+      --accent: #0f766e;
+      --accent-soft: rgba(16, 185, 129, 0.12);
+      --text: #111827;
+      --muted: #6b7280;
+      --border: #d1d5db;
+      --shadow-soft: 0 12px 28px rgba(148, 163, 184, 0.4);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: radial-gradient(circle at top, #111827 0, #020617 52%, #000 100%);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 24px;
+      display: flex;
+      justify-content: center;
+      transition: background 200ms ease-out, color 200ms ease-out;
+    }
+
+    body[data-theme="light"] {
+      background: radial-gradient(circle at top, #e5e7eb 0, #f9fafb 52%, #ffffff 100%);
+    }
+
+    .page {
+      width: 100%;
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .title {
+      font-size: 1.5rem;
+      letter-spacing: 0.03em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .title-pill {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      background: var(--accent-soft);
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(56, 189, 248, 0.4);
+    }
+
+    body[data-theme="light"] .title-pill {
+      border-color: rgba(16, 185, 129, 0.5);
+    }
+
+    .subtitle {
+      font-size: 0.9rem;
+      color: var(--muted);
+      max-width: 720px;
+    }
+
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: stretch;
+      width: 100%;
+    }
+
+    .controls-top {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      width: 100%;
+      justify-content: flex-start;
+      align-items: center;
+    }
+
+    .search {
+      position: relative;
+      flex: 1 1 auto;
+      width: 100%;
+    }
+
+    .search input {
+      width: 100%;
+      background: rgba(15, 23, 42, 0.9);
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      padding: 8px 32px 8px 30px;
+      color: var(--text);
+      font-size: 0.9rem;
+      outline: none;
+      box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.8);
+      transition: border-color var(--transition), box-shadow var(--transition),
+        background var(--transition);
+    }
+
+    body[data-theme="light"] .search input {
+      background: #ffffff;
+      box-shadow: 0 0 0 1px rgba(209, 213, 219, 0.9);
+    }
+
+    .search input::placeholder {
+      color: #6b7280;
+    }
+
+    .search input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.4);
+      background: rgba(15, 23, 42, 1);
+    }
+
+    body[data-theme="light"] .search input:focus {
+      box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.4);
+      background: #f9fafb;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.8rem;
+      color: #6b7280;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chip {
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      padding: 3px 10px;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.13em;
+      color: #9ca3af;
+      background: radial-gradient(circle at top, #0b1120, #020617);
+      cursor: default;
+    }
+
+    body[data-theme="light"] .chip {
+      background: #ffffff;
+      color: #6b7280;
+      border-color: rgba(148, 163, 184, 0.5);
+    }
+
+    .chip--button {
+      cursor: pointer;
+      border-color: rgba(56, 189, 248, 0.5);
+      color: var(--accent);
+    }
+
+    body[data-theme="light"] .chip--button {
+      border-color: rgba(16, 185, 129, 0.6);
+    }
+
+    .chip-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-right: auto;
+    }
+
+    .chip-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: flex-end;
+    }
+
+    .chip--filter {
+      cursor: pointer;
+    }
+
+    .chip--filter-active {
+      border-color: rgba(56, 189, 248, 0.9);
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .chip--action {
+      border-color: rgba(56, 189, 248, 0.8);
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    body[data-theme="light"] .chip--action {
+      border-color: rgba(16, 185, 129, 0.8);
+      background: rgba(16, 185, 129, 0.12);
+      color: #047857;
+    }
+
+    main {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      margin-bottom: 16px;
+    }
+
+    .group {
+      background: radial-gradient(circle at top left, #0b1120, #020617);
+      border-radius: var(--radius-lg);
+      padding: 16px 16px 18px;
+      border: 1px solid rgba(15, 23, 42, 0.9);
+      box-shadow: var(--shadow-soft);
+      position: relative;
+      overflow: hidden;
+      animation: fadeInUp 220ms ease-out;
+    }
+
+    body[data-theme="light"] .group {
+      background: linear-gradient(145deg, #ffffff, #f3f4f6);
+      border-color: rgba(209, 213, 219, 0.9);
+    }
+
+    .group:before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      border: 1px solid rgba(148, 163, 184, 0.15);
+      mix-blend-mode: screen;
+      opacity: 0.9;
+    }
+
+    .group-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      cursor: grab;
+    }
+
+    .group-header:active {
+      cursor: grabbing;
+    }
+
+    .group-title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .group-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .group-kicker {
+      font-size: 0.7rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+    }
+
+    .group-meta {
+      font-size: 0.75rem;
+      color: #6b7280;
+    }
+
+    body[data-theme="light"] .group-meta {
+      color: #6b7280;
+    }
+
+    .group-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .btn {
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      padding: 6px 10px;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      background: rgba(15, 23, 42, 0.9);
+      color: #e5e7eb;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background var(--transition), border-color var(--transition),
+        transform var(--transition);
+      white-space: nowrap;
+    }
+
+    body[data-theme="light"] .btn {
+      background: #ffffff;
+      color: #111827;
+      border-color: rgba(148, 163, 184, 0.7);
+    }
+
+    .btn:hover {
+      border-color: rgba(56, 189, 248, 0.7);
+      background: rgba(15, 23, 42, 1);
+      transform: translateY(-1px);
+    }
+
+    body[data-theme="light"] .btn:hover {
+      border-color: rgba(16, 185, 129, 0.7);
+      background: #f3f4f6;
+    }
+
+    .btn span {
+      font-size: 0.9em;
+    }
+
+    .links-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+    }
+
+    .link-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 10px 11px;
+      border-radius: var(--radius-md);
+      text-decoration: none;
+      background: radial-gradient(circle at top left, #020617, #020617);
+      border: 1px solid rgba(31, 41, 55, 0.9);
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.9);
+      color: inherit;
+      overflow: hidden;
+      cursor: pointer;
+      transition: border-color var(--transition), transform var(--transition),
+        box-shadow var(--transition), background var(--transition), opacity 160ms ease-out;
+      animation: fadeInUp 220ms ease-out;
+    }
+
+    body[data-theme="light"] .link-card {
+      background: #ffffff;
+      border-color: rgba(209, 213, 219, 0.9);
+      box-shadow: 0 8px 18px rgba(148, 163, 184, 0.5);
+    }
+
+    .link-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top, rgba(56, 189, 248, 0.2), transparent 55%);
+      opacity: 0;
+      transition: opacity 160ms ease-out;
+      pointer-events: none;
+    }
+
+    .link-card:hover::before {
+      opacity: 1;
+    }
+
+    .link-card:hover {
+      border-color: rgba(56, 189, 248, 0.7);
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 1);
+      transform: translateY(-2px);
+      background: radial-gradient(circle at top, #020617, #020617);
+    }
+
+    body[data-theme="light"] .link-card:hover {
+      border-color: rgba(16, 185, 129, 0.7);
+      box-shadow: 0 16px 34px rgba(148, 163, 184, 0.7);
+      background: #f9fafb;
+    }
+
+    .link-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .link-favicon-wrapper {
+      width: 18px;
+      height: 18px;
+      border-radius: 6px;
+      overflow: hidden;
+      flex-shrink: 0;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      background: rgba(15, 23, 42, 0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    body[data-theme="light"] .link-favicon-wrapper {
+      background: #f9fafb;
+      border-color: rgba(209, 213, 219, 0.9);
+    }
+
+    .link-favicon {
+      width: 14px;
+      height: 14px;
+      display: block;
+    }
+
+    .link-title {
+      font-size: 0.86rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .link-url {
+      font-size: 0.7rem;
+      color: #9ca3af;
+      word-break: break-all;
+    }
+
+    body[data-theme="light"] .link-url {
+      color: #6b7280;
+    }
+
+    .link-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: auto; 
+      padding-top: 2px;
+    }
+
+    .tag {
+      font-size: 0.68rem;
+      border-radius: 999px;
+      padding: 2px 7px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      color: #9ca3af;
+    }
+
+    body[data-theme="light"] .tag {
+      color: #4b5563;
+      border-color: rgba(156, 163, 175, 0.7);
+      background: #f9fafb;
+    }
+
+    .tag--accent {
+      border-color: rgba(56, 189, 248, 0.7);
+      color: var(--accent);
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    body[data-theme="light"] .tag--accent {
+      background: #ecfdf3;
+      border-color: rgba(16, 185, 129, 0.7);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .hidden-group-focus {
+      display: none !important;
+    }
+
+    footer {
+      margin-top: 10px;
+      font-size: 0.7rem;
+      color: #6b7280;
+      text-align: right;
+    }
+
+    body[data-theme="light"] footer {
+      color: #9ca3af;
+    }
+
+    .add-link-form {
+      margin-top: 10px;
+      border-radius: 10px;
+      padding: 8px 10px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px dashed rgba(148, 163, 184, 0.7);
+      display: none;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    body[data-theme="light"] .add-link-form {
+      background: #f9fafb;
+      border-color: rgba(156, 163, 175, 0.9);
+    }
+
+    .add-link-form input {
+      flex: 1 1 160px;
+      min-width: 140px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      padding: 4px 10px;
+      font-size: 0.78rem;
+      outline: none;
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--text);
+    }
+
+    body[data-theme="light"] .add-link-form input {
+      background: #ffffff;
+    }
+
+    .add-link-form input::placeholder {
+      color: #9ca3af;
+    }
+
+    .add-link-form button {
+      border-radius: 999px;
+      border: 1px solid rgba(56, 189, 248, 0.7);
+      background: var(--accent-soft);
+      color: var(--accent);
+      padding: 4px 10px;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .link-remove {
+      position: absolute;
+      top: 5px;
+      right: 6px;
+      border: none;
+      border-radius: 999px;
+      padding: 2px 6px;
+      font-size: 0.65rem;
+      background: rgba(239, 68, 68, 0.9);
+      color: #fee2e2;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 120ms ease-out;
+    }
+
+    .link-card:hover .link-remove {
+      opacity: 1;
+    }
+
+    .group--dragging {
+      opacity: 0.6;
+    }
+
+    .group--drag-over {
+      outline: 1px dashed var(--accent);
+      outline-offset: -4px;
+    }
+
+    .link-card--dragging {
+      opacity: 0.5;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(3px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 720px) {
+      body {
+        padding: 14px;
+      }
+
+      header {
+        align-items: flex-start;
+      }
+
+      .title {
+        font-size: 1.2rem;
+      }
+
+      .group {
+        padding: 14px 12px 14px;
+      }
+
+      .links-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      }
+
+      .group-header {
+        align-items: flex-start;
+      }
+
+      .group-actions {
+        justify-content: flex-start;
+      }
+
+      .controls {
+        align-items: stretch;
+      }
+
+      .controls-top {
+        justify-content: flex-start;
+      }
+
+      .chip-row {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .chip-actions {
+        justify-content: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div class="title-block">
+        <div class="title">
+          <span class="title-pill">Start Page</span>
+          <span>Minha Dashboard</span>
+        </div>
+        <p class="subtitle">
+          Painel personalizado para acessar rapidamente os links que fazem parte da minha rotina:
+          trabalho, finanças, estudos, infraestrutura e projetos pessoais.
+        </p>
+      </div>
+
+      <div class="controls">
+        <div class="controls-top">
+          <div class="search">
+            <span class="search-icon">⌕</span>
+            <input
+              id="search-input"
+              type="text"
+              placeholder="Buscar por nome ou URL..."
+            />
+          </div>
+        </div>
+        <div class="chip-row">
+          <div id="group-chips" class="chip-group"></div>
+
+          <div class="chip-actions">
+            <button class="chip chip--button chip--action" id="export-btn">
+              Exportar
+            </button>
+            <button class="chip chip--button chip--action" id="import-btn">
+              Importar
+            </button>
+            <button class="chip chip--button" id="theme-toggle">
+              Tema: Escuro
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main id="groups-container">
+      <!-- Grupos via JS -->
+    </main>
+
+    <footer>
+      Links principais definidos neste arquivo; links adicionais são armazenados localmente no navegador.
+    </footer>
+  </div>
+
+  <input type="file" id="import-input" accept="application/json" style="display:none" />
+
+  <!-- Config base em JSON -->
+  <script id="links-config" type="application/json">
+  {
+    "groups": [
+      {
+        "id": "trabalho",
+        "label": "Trabalho",
+        "title": "Stack Alura",
+        "description": "Ferramentas que usa no dia a dia do trabalho e do Time Verde.",
+        "openWithMain": true,
+        "links": [
+          {
+            "title": "Microsoft Teams",
+            "url": "https://teams.microsoft.com/",
+            "tags": ["Reuniões", "Comunicação"],
+            "accent": true
+          },
+          {
+            "title": "GitHub",
+            "url": "https://github.com/",
+            "tags": ["Repos", "Code Review"]
+          }
+        ]
+      },
+      {
+        "id": "pessoal",
+        "label": "Pessoal",
+        "title": "Finanças, vida e organização da casa",
+        "description": "Links para banco, comunicação pessoal e organização da rotina.",
+        "openWithMain": true,
+        "links": [
+          {
+            "title": "Nubank",
+            "url": "https://www.nubank.com.br/",
+            "tags": ["Banco", "Finanças"],
+            "accent": true
+          },
+          {
+            "title": "Gmail Pessoal",
+            "url": "https://mail.google.com/",
+            "tags": ["Email"]
+          },
+          {
+            "title": "Google Calendar",
+            "url": "https://calendar.google.com/",
+            "tags": ["Agenda"]
+          }
+        ]
+      },
+      {
+        "id": "estudos",
+        "label": "Estudos",
+        "title": "Cursos, documentação e referências",
+        "description": "Plataformas e materiais para estudo contínuo e atualização técnica.",
+        "openWithMain": false,
+        "links": [
+          {
+            "title": "Alura",
+            "url": "https://www.alura.com.br/",
+            "tags": ["Cursos"],
+            "accent": true
+          },
+          {
+            "title": "Stack Overflow",
+            "url": "https://stackoverflow.com/",
+            "tags": ["Debug"]
+          },
+          {
+            "title": "Spring Boot Docs",
+            "url": "https://docs.spring.io/spring-boot/docs/current/reference/html/",
+            "tags": ["Java", "Backend"]
+          }
+        ]
+      },
+      {
+        "id": "devops",
+        "label": "DevOps & Infra",
+        "title": "Servidores, cloud e observabilidade",
+        "description": "Acesso rápido a pipelines, infraestrutura em nuvem e monitoramento.",
+        "openWithMain": false,
+        "links": [
+          {
+            "title": "Jenkins",
+            "url": "https://jenkins.io/",
+            "tags": ["CI/CD"]
+          },
+          {
+            "title": "AWS Console",
+            "url": "https://console.aws.amazon.com/",
+            "tags": ["Cloud", "Infra"]
+          }
+        ]
+      },
+      {
+        "id": "fiap",
+        "label": "Pós / FIAP",
+        "title": "Tech Challenge e materiais da pós",
+        "description": "Ambiente virtual, referências e conteúdos da pós-graduação.",
+        "openWithMain": false,
+        "links": [
+          {
+            "title": "Portal FIAP",
+            "url": "https://on.fiap.com.br/",
+            "tags": ["Pós", "Estudos"]
+          }
+        ]
+      },
+      {
+        "id": "side-projects",
+        "label": "Side Projects",
+        "title": "Projetos pessoais e MVPs",
+        "description": "MVPs, experimentos e projetos autorais para testar ideias.",
+        "openWithMain": false,
+        "links": [
+          {
+            "title": "Bússola Financeira",
+            "url": "https://bussolafinanceira.top/",
+            "tags": ["Projeto"],
+            "accent": true
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <script>
+    const LS_KEY_LINKS = "dashboard_user_links_v1";
+    const LS_KEY_THEME = "dashboard_theme";
+    const LS_KEY_GROUP_ORDER = "dashboard_group_order_v1";
+    const LS_KEY_LINK_ORDERS = "dashboard_link_orders_v1";
+
+    const parsedConfig = JSON.parse(
+      document.getElementById("links-config").textContent.trim()
+    );
+
+    let userLinks = loadUserLinks();
+    let groupOrder = loadGroupOrder();
+    let linkOrders = loadLinkOrders();
+
+    const groupsContainer = document.getElementById("groups-container");
+    const searchInput = document.getElementById("search-input");
+    const themeToggleBtn = document.getElementById("theme-toggle");
+    const exportBtn = document.getElementById("export-btn");
+    const importBtn = document.getElementById("import-btn");
+    const importInput = document.getElementById("import-input");
+    const chipGroupContainer = document.getElementById("group-chips");
+
+    let linkCards = [];
+    let groupFilterChips = [];
+    let draggingGroupId = null;
+    let draggingLinkInfo = null;
+    let currentFocus = "all";
+
+    // Tema
+    initTheme();
+
+    function initTheme() {
+      const saved = localStorage.getItem(LS_KEY_THEME) || "dark";
+      document.body.setAttribute("data-theme", saved);
+      updateThemeToggleLabel();
+
+      themeToggleBtn.addEventListener("click", () => {
+        const current = document.body.getAttribute("data-theme") || "dark";
+        const next = current === "dark" ? "light" : "dark";
+        document.body.setAttribute("data-theme", next);
+        localStorage.setItem(LS_KEY_THEME, next);
+        updateThemeToggleLabel();
+      });
+    }
+
+    function updateThemeToggleLabel() {
+      const theme = document.body.getAttribute("data-theme") || "dark";
+      themeToggleBtn.textContent = theme === "dark" ? "Tema: Escuro" : "Tema: Claro";
+    }
+
+    // Storage utils
+    function loadUserLinks() {
+      try {
+        const raw = localStorage.getItem(LS_KEY_LINKS);
+        if (!raw) return {};
+        return JSON.parse(raw);
+      } catch (e) {
+        console.warn("Erro ao carregar links do usuário:", e);
+        return {};
+      }
+    }
+
+    function saveUserLinks() {
+      localStorage.setItem(LS_KEY_LINKS, JSON.stringify(userLinks));
+    }
+
+    function loadGroupOrder() {
+      try {
+        const raw = localStorage.getItem(LS_KEY_GROUP_ORDER);
+        return raw ? JSON.parse(raw) : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveGroupOrder() {
+      localStorage.setItem(LS_KEY_GROUP_ORDER, JSON.stringify(groupOrder));
+    }
+
+    function loadLinkOrders() {
+      try {
+        const raw = localStorage.getItem(LS_KEY_LINK_ORDERS);
+        return raw ? JSON.parse(raw) : {};
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function saveLinkOrders() {
+      localStorage.setItem(LS_KEY_LINK_ORDERS, JSON.stringify(linkOrders));
+    }
+
+    function getFaviconUrl(url) {
+      try {
+        const u = new URL(url);
+        return (
+          "https://www.google.com/s2/favicons?sz=64&domain_url=" +
+          encodeURIComponent(u.origin)
+        );
+      } catch (e) {
+        return "";
+      }
+    }
+
+    // Render
+    function renderAll() {
+      groupsContainer.innerHTML = "";
+
+      const groups = parsedConfig.groups.slice();
+      if (groupOrder && groupOrder.length) {
+        groups.sort((a, b) => {
+          const ia = groupOrder.indexOf(a.id);
+          const ib = groupOrder.indexOf(b.id);
+          if (ia === -1 && ib === -1) return 0;
+          if (ia === -1) return 1;
+          if (ib === -1) return -1;
+          return ia - ib;
+        });
+      }
+
+      groups.forEach((group) => {
+        const groupId = group.id;
+        const section = document.createElement("section");
+        section.className = "group";
+        section.dataset.group = groupId;
+        if (group.openWithMain) {
+          section.dataset.openWithMain = "true";
+        }
+        section.draggable = true;
+
+        const header = document.createElement("div");
+        header.className = "group-header";
+
+        const titleBlock = document.createElement("div");
+        titleBlock.className = "group-title-block";
+
+        const kicker = document.createElement("span");
+        kicker.className = "group-kicker";
+        kicker.textContent = group.label.toUpperCase();
+
+        const title = document.createElement("div");
+        title.className = "group-title";
+        title.textContent = group.title;
+
+        const meta = document.createElement("span");
+        meta.className = "group-meta";
+        meta.textContent = group.description || "";
+
+        titleBlock.appendChild(kicker);
+        titleBlock.appendChild(title);
+        titleBlock.appendChild(meta);
+
+        const actions = document.createElement("div");
+        actions.className = "group-actions";
+
+        const openBtn = document.createElement("button");
+        openBtn.className = "btn btn-open-group";
+        openBtn.innerHTML = "<span>●</span><span>Abrir todos</span>";
+
+        const addBtn = document.createElement("button");
+        addBtn.className = "btn btn-add-link";
+        addBtn.innerHTML = "<span>＋</span><span>Adicionar link</span>";
+
+        actions.appendChild(openBtn);
+        actions.appendChild(addBtn);
+
+        header.appendChild(titleBlock);
+        header.appendChild(actions);
+
+        const grid = document.createElement("div");
+        grid.className = "links-grid";
+
+        const baseLinks = (group.links || []).map((link, index) => {
+          return {
+            ...link,
+            _internalId: `${groupId}::base::${index}`,
+            _origin: "base"
+          };
+        });
+
+        const extra = (userLinks[groupId] || []).map((link) => {
+          if (!link.id) {
+            link.id =
+              "user-" +
+              Date.now() +
+              "-" +
+              Math.random().toString(36).slice(2, 8);
+          }
+          return {
+            ...link,
+            _internalId: `${groupId}::user::${link.id}`,
+            _origin: "user"
+          };
+        });
+
+        userLinks[groupId] = extra.map((l) => {
+          return {
+            id: l.id,
+            title: l.title,
+            url: l.url,
+            tags: l.tags || [],
+            accent: !!l.accent
+          };
+        });
+        saveUserLinks();
+
+        let allLinks = [...baseLinks, ...extra];
+
+        const storedOrder = linkOrders[groupId] || [];
+        if (storedOrder.length) {
+          const map = new Map();
+          allLinks.forEach((l) => map.set(l._internalId, l));
+          const ordered = [];
+          storedOrder.forEach((id) => {
+            if (map.has(id)) {
+              ordered.push(map.get(id));
+              map.delete(id);
+            }
+          });
+          map.forEach((val) => ordered.push(val));
+          allLinks = ordered;
+        }
+
+        allLinks.forEach((linkObj) => {
+          const card = createLinkCard(
+            groupId,
+            linkObj,
+            linkObj._internalId,
+            linkObj._origin
+          );
+          grid.appendChild(card);
+        });
+
+        const form = document.createElement("form");
+        form.className = "add-link-form";
+        form.innerHTML = `
+          <input type="text" name="title" placeholder="Título" required />
+          <input type="url" name="url" placeholder="https://site.com" required />
+          <input type="text" name="tags" placeholder="Tags separadas por vírgula (opcional)" />
+          <button type="submit">Salvar</button>
+        `;
+
+        openBtn.addEventListener("click", () => openAllLinksInGroup(section));
+
+        addBtn.addEventListener("click", () => {
+          form.style.display = form.style.display === "flex" ? "none" : "flex";
+        });
+
+        form.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const formData = new FormData(form);
+          const titleValue = (formData.get("title") || "").toString().trim();
+          const urlValue = (formData.get("url") || "").toString().trim();
+          const tagsRaw = (formData.get("tags") || "").toString().trim();
+          if (!titleValue || !urlValue) return;
+
+          const newLink = {
+            id:
+              "user-" +
+              Date.now() +
+              "-" +
+              Math.random().toString(36).slice(2, 8),
+            title: titleValue,
+            url: urlValue,
+            tags: tagsRaw
+              ? tagsRaw
+                  .split(",")
+                  .map((t) => t.trim())
+                  .filter(Boolean)
+              : [],
+            accent: false
+          };
+
+          if (!userLinks[groupId]) {
+            userLinks[groupId] = [];
+          }
+          userLinks[groupId].push(newLink);
+          saveUserLinks();
+
+          const internalId = `${groupId}::user::${newLink.id}`;
+          const card = createLinkCard(groupId, newLink, internalId, "user");
+          grid.appendChild(card);
+          refreshLinkCards();
+          saveLinkOrderForGroup(groupId);
+
+          form.reset();
+          form.style.display = "none";
+        });
+
+        // drag grupos
+        section.addEventListener("dragstart", (e) => {
+          draggingGroupId = groupId;
+          section.classList.add("group--dragging");
+          e.dataTransfer.effectAllowed = "move";
+        });
+
+        section.addEventListener("dragend", () => {
+          draggingGroupId = null;
+          section.classList.remove("group--dragging");
+          document
+            .querySelectorAll(".group--drag-over")
+            .forEach((el) => el.classList.remove("group--drag-over"));
+          saveGroupOrderFromDOM();
+        });
+
+        section.addEventListener("dragover", (e) => {
+          e.preventDefault();
+          if (!draggingGroupId || draggingGroupId === groupId) return;
+          section.classList.add("group--drag-over");
+        });
+
+        section.addEventListener("dragleave", () => {
+          section.classList.remove("group--drag-over");
+        });
+
+        section.addEventListener("drop", (e) => {
+          e.preventDefault();
+          section.classList.remove("group--drag-over");
+          const draggedEl = groupsContainer.querySelector(
+            `.group[data-group="${draggingGroupId}"]`
+          );
+          if (draggedEl && draggedEl !== section) {
+            groupsContainer.insertBefore(draggedEl, section);
+            saveGroupOrderFromDOM();
+          }
+        });
+
+        // drag links
+        grid.addEventListener("dragover", (e) => {
+          if (!draggingLinkInfo) return;
+          e.preventDefault();
+          const targetCard = e.target.closest(".link-card");
+          const draggingEl = grid.querySelector(".link-card--dragging");
+          if (!targetCard || !draggingEl || targetCard === draggingEl) return;
+
+          const rect = targetCard.getBoundingClientRect();
+          const before = e.clientY < rect.top + rect.height / 2;
+          if (before) {
+            grid.insertBefore(draggingEl, targetCard);
+          } else {
+            grid.insertBefore(draggingEl, targetCard.nextSibling);
+          }
+        });
+
+        grid.addEventListener("drop", (e) => {
+          if (!draggingLinkInfo) return;
+          e.preventDefault();
+          saveLinkOrderForGroup(groupId);
+        });
+
+        section.appendChild(header);
+        section.appendChild(grid);
+        section.appendChild(form);
+
+        groupsContainer.appendChild(section);
+      });
+
+      refreshLinkCards();
+      updateGroupOrderIfEmpty();
+      populateFilterChips();
+      applyFocusFilter();
+    }
+
+    function createLinkCard(groupId, link, internalId, origin) {
+      const card = document.createElement("a");
+      card.className = "link-card";
+      card.href = link.url;
+      card.target = "_blank";
+      card.rel = "noopener noreferrer";
+      card.dataset.linkId = internalId;
+      card.dataset.groupId = groupId;
+      card.dataset.origin = origin;
+      card.draggable = true;
+
+      const header = document.createElement("div");
+      header.className = "link-header";
+
+      const favWrap = document.createElement("div");
+      favWrap.className = "link-favicon-wrapper";
+
+      const fav = document.createElement("img");
+      fav.className = "link-favicon";
+      const favUrl = getFaviconUrl(link.url);
+      if (favUrl) fav.src = favUrl;
+      favWrap.appendChild(fav);
+
+      const title = document.createElement("div");
+      title.className = "link-title";
+      title.textContent = link.title;
+
+      header.appendChild(favWrap);
+      header.appendChild(title);
+
+      const url = document.createElement("div");
+      url.className = "link-url";
+      url.textContent = link.url;
+
+      const tagsWrap = document.createElement("div");
+      tagsWrap.className = "link-tags";
+
+      (link.tags || []).forEach((tagText, index) => {
+        const tag = document.createElement("span");
+        tag.className = "tag";
+        if (link.accent && index === 0) {
+          tag.classList.add("tag--accent");
+        }
+        tag.textContent = tagText;
+        tagsWrap.appendChild(tag);
+      });
+
+      card.appendChild(header);
+      card.appendChild(url);
+      if ((link.tags || []).length) {
+        card.appendChild(tagsWrap);
+      }
+
+      if (origin === "user") {
+        const removeBtn = document.createElement("button");
+        removeBtn.className = "link-remove";
+        removeBtn.textContent = "×";
+        removeBtn.title = "Remover link";
+        removeBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const list = userLinks[groupId] || [];
+          userLinks[groupId] = list.filter(
+            (l) => `${groupId}::user::${l.id}` !== internalId
+          );
+          saveUserLinks();
+          card.remove();
+          refreshLinkCards();
+          saveLinkOrderForGroup(groupId);
+        });
+        card.appendChild(removeBtn);
+      }
+
+      card.addEventListener("dragstart", (e) => {
+        draggingLinkInfo = { groupId, linkId: internalId };
+        card.classList.add("link-card--dragging");
+        e.dataTransfer.effectAllowed = "move";
+      });
+
+      card.addEventListener("dragend", () => {
+        card.classList.remove("link-card--dragging");
+        draggingLinkInfo = null;
+      });
+
+      return card;
+    }
+
+    function refreshLinkCards() {
+      linkCards = Array.from(document.querySelectorAll(".link-card"));
+    }
+
+    // Busca
+    searchInput.addEventListener("input", () => {
+      const term = searchInput.value.trim().toLowerCase();
+      linkCards.forEach((card) => {
+        const titleText =
+          card.querySelector(".link-title")?.textContent || "";
+        const urlText = card.querySelector(".link-url")?.textContent || "";
+        const text = (titleText + " " + urlText).toLowerCase();
+
+        if (!term || text.includes(term)) {
+          card.classList.remove("hidden");
+        } else {
+          card.classList.add("hidden");
+        }
+      });
+    });
+
+    // Abrir todos de um grupo
+    function openAllLinksInGroup(groupElement) {
+      const links = groupElement.querySelectorAll(".link-card");
+      links.forEach((link) => {
+        const url = link.getAttribute("href");
+        if (url) {
+          window.open(url, "_blank", "noopener");
+        }
+      });
+    }
+
+    // Ordem de grupos
+    function saveGroupOrderFromDOM() {
+      groupOrder = Array.from(
+        groupsContainer.querySelectorAll(".group")
+      ).map((g) => g.dataset.group);
+      saveGroupOrder();
+    }
+
+    function updateGroupOrderIfEmpty() {
+      if (!groupOrder || !groupOrder.length) {
+        groupOrder = Array.from(
+          groupsContainer.querySelectorAll(".group")
+        ).map((g) => g.dataset.group);
+        saveGroupOrder();
+      }
+    }
+
+    // Ordem de links
+    function saveLinkOrderForGroup(groupId) {
+      const grid = groupsContainer.querySelector(
+        `.group[data-group="${groupId}"] .links-grid`
+      );
+      if (!grid) return;
+      const ids = Array.from(grid.querySelectorAll(".link-card"))
+        .map((c) => c.dataset.linkId)
+        .filter(Boolean);
+      linkOrders[groupId] = ids;
+      saveLinkOrders();
+    }
+
+    // Chips de filtro
+    function populateFilterChips() {
+      chipGroupContainer.innerHTML = "";
+
+      const allChip = document.createElement("button");
+      allChip.className = "chip chip--button chip--filter";
+      allChip.dataset.focusId = "all";
+      allChip.textContent = "Todos";
+      chipGroupContainer.appendChild(allChip);
+
+      const groups = Array.from(
+        groupsContainer.querySelectorAll(".group")
+      );
+
+      groups.forEach((g) => {
+        const id = g.dataset.group;
+        const label =
+          g.querySelector(".group-kicker")?.textContent || id;
+        const chip = document.createElement("button");
+        chip.className = "chip chip--button chip--filter";
+        chip.dataset.focusId = id;
+        chip.textContent = label;
+        chipGroupContainer.appendChild(chip);
+      });
+
+      groupFilterChips = Array.from(
+        chipGroupContainer.querySelectorAll(".chip--filter")
+      );
+
+      groupFilterChips.forEach((chip) => {
+        chip.addEventListener("click", () => {
+          currentFocus = chip.dataset.focusId || "all";
+          applyFocusFilter();
+        });
+      });
+    }
+
+    function applyFocusFilter() {
+      const selected = currentFocus || "all";
+      const groups = document.querySelectorAll(".group");
+      groups.forEach((g) => {
+        if (selected === "all" || g.dataset.group === selected) {
+          g.classList.remove("hidden-group-focus");
+        } else {
+          g.classList.add("hidden-group-focus");
+        }
+      });
+
+      if (groupFilterChips && groupFilterChips.length) {
+        groupFilterChips.forEach((chip) => {
+          const id = chip.dataset.focusId;
+          if (
+            (selected === "all" && id === "all") ||
+            (selected !== "all" && id === selected)
+          ) {
+            chip.classList.add("chip--filter-active");
+          } else {
+            chip.classList.remove("chip--filter-active");
+          }
+        });
+      }
+    }
+
+    // Exportar / Importar
+    exportBtn.addEventListener("click", () => {
+      const theme = document.body.getAttribute("data-theme") || "dark";
+
+      const payload = {
+        version: 3,
+        theme,
+        userLinks,
+        groupOrder,
+        linkOrders
+      };
+
+      const blob = new Blob([JSON.stringify(payload, null, 2)], {
+        type: "application/json"
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "dashboard-config.json";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    });
+
+    importBtn.addEventListener("click", () => {
+      importInput.value = "";
+      importInput.click();
+    });
+
+    importInput.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        try {
+          const data = JSON.parse(ev.target.result);
+          applyImportedConfig(data);
+        } catch (err) {
+          alert("Erro ao ler arquivo de configuração.");
+          console.error(err);
+        }
+      };
+      reader.readAsText(file, "utf-8");
+    });
+
+    function applyImportedConfig(data) {
+      if (data.userLinks) {
+        userLinks = data.userLinks;
+        saveUserLinks();
+      }
+      if (data.groupOrder) {
+        groupOrder = data.groupOrder;
+        saveGroupOrder();
+      }
+      if (data.linkOrders) {
+        linkOrders = data.linkOrders;
+        saveLinkOrders();
+      }
+      if (data.theme) {
+        document.body.setAttribute("data-theme", data.theme);
+        localStorage.setItem(LS_KEY_THEME, data.theme);
+      }
+
+      updateThemeToggleLabel();
+      currentFocus = "all";
+      renderAll();
+    }
+
+    // init
+    renderAll();
+  </script>
+</body>
+</html>
